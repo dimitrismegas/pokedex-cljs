@@ -1,0 +1,2 @@
+* Pokedex.org CLJS
+Port of pokedex.org to ClojureScript for fun and learning!
