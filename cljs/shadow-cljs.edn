@@ -5,11 +5,23 @@
   "src/test"]
 
  :dependencies
- []
+ [[prismatic/dommy "1.1.0"]]
 
  :builds
- {:app      {:target     :browser
-             :output-dir "public/js"
-             :asset-path "/js"
-             :modules    {:main {:entries []}}}}
+ {:app {:target     :browser
+        :output-dir "public/js"
+        :asset-path "/js"
+        :modules
+        {:shared {:entries []}
+         :main   {:init-fn    client.main.index/init
+                  ;; main module code cannot reference the worker module directly since it does not depend on it
+                  :depends-on #{:shared}}
+         ;; Configuration to enable web worker
+         ;; otherwise we were getting
+         ;; "Loading Worker from “http://localhost/worker.js” was blocked because of a disallowed MIME type (“text/html”).
+         :worker {:init-fn    client.shared.worker/init
+                  :depends-on #{:shared}
+                  :web-worker true}}
+        :devtool    {:http-root "public"
+                     :http-port 8000}}}
  :dev-http {8000 "public"}}
