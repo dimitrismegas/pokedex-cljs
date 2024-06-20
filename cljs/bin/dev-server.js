@@ -1,6 +1,5 @@
 const { spawn } = require('child_process');
 const { promises: fs } = require('fs');
-const mkdirp = require('mkdirp');
 const PouchDB = require('pouchdb-core')
   .plugin(require('pouchdb-adapter-http'))
   .plugin(require('pouchdb-adapter-leveldb'))
@@ -9,7 +8,7 @@ const PouchDB = require('pouchdb-core')
 const fetch = require('node-fetch');
 
 async function startPouchServer() {
-  await mkdirp('db');
+  await fs.mkdir('db', { recursive: true });
 
   const child = spawn(
     require.resolve('pouchdb-server/bin/pouchdb-server'),
