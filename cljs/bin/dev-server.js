@@ -5,7 +5,6 @@ const PouchDB = require('pouchdb-core')
   .plugin(require('pouchdb-adapter-leveldb'))
   .plugin(require('pouchdb-replication'))
   .plugin(require('pouchdb-load'));
-const fetch = require('node-fetch');
 
 async function startPouchServer() {
   await fs.mkdir('db', { recursive: true });
