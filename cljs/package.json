@@ -11,5 +11,13 @@
   "description": "",
   "devDependencies": {
     "shadow-cljs": "^2.28.9"
+  },
+  "dependencies": {
+    "pouchdb-adapter-http": "^8.0.1",
+    "pouchdb-adapter-leveldb": "^8.0.1",
+    "pouchdb-core": "^8.0.1",
+    "pouchdb-load": "^1.4.6",
+    "pouchdb-replication": "^8.0.1",
+    "pouchdb-server": "^4.2.0"
   }
 }
