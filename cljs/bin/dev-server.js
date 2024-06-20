@@ -1,36 +1,38 @@
-var childProcess = require('child_process');
-var bluebird = require('bluebird');
-var mkdirp = bluebird.promisify(require('mkdirp'));
-var fs = bluebird.promisifyAll(require('fs'));
-var PouchDB = require('pouchdb-core')
+const { spawn } = require('child_process');
+const { promises: fs } = require('fs');
+const mkdirp = require('mkdirp');
+const PouchDB = require('pouchdb-core')
   .plugin(require('pouchdb-adapter-http'))
   .plugin(require('pouchdb-adapter-leveldb'))
   .plugin(require('pouchdb-replication'))
   .plugin(require('pouchdb-load'));
-var fetch = require('node-fetch');
+const fetch = require('node-fetch');
 
 async function startPouchServer() {
   await mkdirp('db');
 
-  var child = childProcess.spawn(
+  const child = spawn(
     require.resolve('pouchdb-server/bin/pouchdb-server'),
     ['-p', '6984'], {
       cwd: 'db'
     }
   );
-  child.stdout.on('data', function (data) {
+
+  child.stdout.on('data', (data) => {
     console.log(data.toString('utf-8'));
   });
-  child.stderr.on('data', function (data) {
+
+  child.stderr.on('data', (data) => {
     console.error(data.toString('utf-8'));
   });
 
   // wait for pouchdb-server to start up
-  var count = 0;
+  let count = 0;
   while (true) {
     await new Promise(resolve => setTimeout(resolve, 500));
     try {
-      var json = await (await fetch('http://localhost:6984')).json();
+      const response = await fetch('http://localhost:6984');
+      const json = await response.json();
       if (json.version) {
         break;
       }
@@ -42,29 +44,28 @@ async function startPouchServer() {
       }
     }
   }
-
 }
 
 async function loadData() {
-  var monstersDB = new PouchDB('http://localhost:6984/monsters');
-  var descriptionsDB = new PouchDB('http://localhost:6984/descriptions');
-  var evolutionsDB = new PouchDB('http://localhost:6984/evolutions');
-  var typesDB = new PouchDB('http://localhost:6984/types');
-  var movesDB = new PouchDB('http://localhost:6984/moves');
-  var monsterMovesDB = new PouchDB('http://localhost:6984/monster-moves');
-  var monstersSupplementalDB = new PouchDB('http://localhost:6984/monsters-supplemental');
+  const monstersDB = new PouchDB('http://localhost:6984/monsters');
+  const descriptionsDB = new PouchDB('http://localhost:6984/descriptions');
+  const evolutionsDB = new PouchDB('http://localhost:6984/evolutions');
+  const typesDB = new PouchDB('http://localhost:6984/types');
+  const movesDB = new PouchDB('http://localhost:6984/moves');
+  const monsterMovesDB = new PouchDB('http://localhost:6984/monster-moves');
+  const monstersSupplementalDB = new PouchDB('http://localhost:6984/monsters-supplemental');
 
-  var loadPromises = [
-    monstersDB.load(await fs.readFileAsync('src/assets/skim-monsters.txt', 'utf-8')),
-    descriptionsDB.load(await fs.readFileAsync('src/assets/descriptions.txt', 'utf-8')),
-    evolutionsDB.load(await fs.readFileAsync('src/assets/evolutions.txt', 'utf-8')),
-    typesDB.load(await fs.readFileAsync('src/assets/types.txt', 'utf-8')),
-    movesDB.load(await fs.readFileAsync('src/assets/moves.txt', 'utf-8')),
-    monsterMovesDB.load(await fs.readFileAsync('src/assets/monster-moves.txt', 'utf-8')),
-    monstersSupplementalDB.load(await fs.readFileAsync('src/assets/monsters-supplemental.txt', 'utf-8'))
+  const loadPromises = [
+    monstersDB.load(await fs.readFile('src/assets/skim-monsters.txt', 'utf-8')),
+    descriptionsDB.load(await fs.readFile('src/assets/descriptions.txt', 'utf-8')),
+    evolutionsDB.load(await fs.readFile('src/assets/evolutions.txt', 'utf-8')),
+    typesDB.load(await fs.readFile('src/assets/types.txt', 'utf-8')),
+    movesDB.load(await fs.readFile('src/assets/moves.txt', 'utf-8')),
+    monsterMovesDB.load(await fs.readFile('src/assets/monster-moves.txt', 'utf-8')),
+    monstersSupplementalDB.load(await fs.readFile('src/assets/monsters-supplemental.txt', 'utf-8'))
   ];
 
-  for (var promise of loadPromises) {
+  for (const promise of loadPromises) {
     await promise;
   }
 
@@ -75,7 +76,7 @@ async function doIt() {
   await startPouchServer();
 
   // wait for pouch server to start
-  await new Promise(function (resolve) { setTimeout(resolve, 1000); });
+  await new Promise(resolve => setTimeout(resolve, 1000));
 
   await loadData();
 
