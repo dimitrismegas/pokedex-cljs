@@ -54,13 +54,13 @@ async function loadData() {
   const monstersSupplementalDB = new PouchDB('http://localhost:6984/monsters-supplemental');
 
   const loadPromises = [
-    monstersDB.load(await fs.readFile('src/assets/skim-monsters.txt', 'utf-8')),
-    descriptionsDB.load(await fs.readFile('src/assets/descriptions.txt', 'utf-8')),
-    evolutionsDB.load(await fs.readFile('src/assets/evolutions.txt', 'utf-8')),
-    typesDB.load(await fs.readFile('src/assets/types.txt', 'utf-8')),
-    movesDB.load(await fs.readFile('src/assets/moves.txt', 'utf-8')),
-    monsterMovesDB.load(await fs.readFile('src/assets/monster-moves.txt', 'utf-8')),
-    monstersSupplementalDB.load(await fs.readFile('src/assets/monsters-supplemental.txt', 'utf-8'))
+    monstersDB.load(await fs.readFile('assets/skim-monsters.txt', 'utf-8')),
+    descriptionsDB.load(await fs.readFile('assets/descriptions.txt', 'utf-8')),
+    evolutionsDB.load(await fs.readFile('assets/evolutions.txt', 'utf-8')),
+    typesDB.load(await fs.readFile('assets/types.txt', 'utf-8')),
+    movesDB.load(await fs.readFile('assets/moves.txt', 'utf-8')),
+    monsterMovesDB.load(await fs.readFile('assets/monster-moves.txt', 'utf-8')),
+    monstersSupplementalDB.load(await fs.readFile('assets/monsters-supplemental.txt', 'utf-8'))
   ];
 
   for (const promise of loadPromises) {
